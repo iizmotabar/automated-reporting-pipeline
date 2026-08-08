@@ -4,29 +4,66 @@ Scheduled data refresh with built in anomaly detection, so issues get caught the
 
 ## The problem this solves
 
-A dashboard is only useful if the data behind it is fresh and someone actually looks at it when something breaks. This pipeline handles both, refreshing the warehouse on a schedule and pushing an alert to Slack the moment a metric moves outside its normal range.
+A dashboard is only useful if the data behind it is fresh and someone actually looks at it when something breaks. Most teams have neither: refreshes happen manually and irregularly, and nobody's watching the numbers closely enough to notice a tracking break or a spend spike until it's already cost real money. This pipeline handles both halves of that problem, refreshing the warehouse on a fixed schedule and pushing an alert the moment a watched metric moves outside its expected range.
 
 ## Architecture
 
 ```mermaid
 flowchart TD
-    A[Cloud Scheduler - daily trigger] --> B[Extract from source APIs]
-    B --> C[Load into BigQuery raw tables]
-    C --> D[Run dbt models]
+    A[Cloud Scheduler - 5am daily trigger] --> B{Extract loop}
+    B --> B1[Google Ads]
+    B --> B2[Meta Ads]
+    B --> B3[GA4]
+    B --> B4[CRM]
+    B1 & B2 & B3 & B4 --> C[Load into BigQuery raw tables]
+    C --> D[dbt run: staging + marts]
     D --> E[Anomaly detector]
-    E -->|Within range| F[Update dashboard cache]
-    E -->|Out of range| G[Slack / email alert]
+
+    E --> F{For each watched metric}
+    F --> G[Compare latest value to trailing 7d average]
+    G --> H{Deviation over threshold?}
+    H -->|No| I[Mark healthy, update dashboard cache]
+    H -->|Yes| J[Slack alert with metric, expected range, actual value]
+
+    subgraph Retry["Failure handling"]
+        B1 -.retry up to 3x.-> B1
+        D -.on failure.-> K[Pipeline failure alert]
+    end
+
+    classDef trigger fill:#F5F4FA,stroke:#644aab,color:#333
+    classDef extract fill:#fff3cd,stroke:#d35400,color:#333
+    classDef check fill:#e0f2f1,stroke:#00796b,color:#333
+    classDef alert fill:#ffebee,stroke:#c0392b,color:#333
+    classDef ok fill:#e8f5e9,stroke:#1e8449,color:#333
+    class A trigger
+    class B1,B2,B3,B4,C extract
+    class D,E,F,G,H check
+    class J,K alert
+    class I ok
 ```
+
+The anomaly detector step is deliberately positioned after the dbt run, not before, so it's always evaluating modeled, business-logic-applied metrics like blended ROAS rather than raw, unjoined numbers that would produce noisy false positives.
 
 ## What's in here
 
-* `scripts/daily_refresh.py` orchestrates the extract, load, and dbt run steps in order
-* `scripts/anomaly_detector.py` compares each day's key metrics against a trailing average and flags anything outside a configurable threshold
+* `scripts/daily_refresh.py` orchestrates the extract, load, and dbt run steps in order, with per-source error handling so one failed extractor doesn't silently take down the rest
+* `scripts/anomaly_detector.py` compares each day's key metrics against a trailing 7 day average and flags anything outside a configurable threshold
 * `config/alert_rules.yaml` defines which metrics are watched and how sensitive the anomaly threshold is per metric
 
 ## How it's used in practice
 
-The refresh runs early each morning so the dashboard is current before anyone opens it. The anomaly detector isn't a fixed threshold, it compares against a rolling seven day average per metric, since a 20% spend increase means something different for a channel that normally moves 5% a day versus one that's usually flat. When something trips the threshold, the alert goes to Slack with the metric, the expected range, and the actual value, so whoever's on call doesn't have to go digging to understand what happened.
+The refresh runs early each morning so the dashboard is current before anyone opens it. The anomaly detector isn't a fixed threshold, it compares against a rolling seven day average per metric, since a 20% spend increase means something different for a channel that normally moves 5% a day versus one that's usually flat. Thresholds are set per metric in `alert_rules.yaml` rather than globally, because a metric like session count naturally has more day to day noise than something like blended ROAS. When something trips the threshold, the alert goes to Slack with the metric name, the expected range, and the actual value, so whoever's on call doesn't have to go digging to understand what happened before deciding whether it's real.
+
+## Tuning the thresholds
+
+Start conservative (25-35%) and tighten over the first few weeks once you have a sense of the metric's normal day to day variance. A threshold that's too tight produces alert fatigue, which is worse than missing a real anomaly, since it trains whoever's on call to ignore the channel.
+
+## Setup
+
+1. Deploy `daily_refresh.py` as a Cloud Function or Cloud Run job
+2. Configure Cloud Scheduler to trigger it daily at the desired time
+3. Set up a Slack incoming webhook and add the URL to `anomaly_detector.py`
+4. Adjust `config/alert_rules.yaml` to match the metrics and thresholds relevant to the client
 
 ## Stack
 
