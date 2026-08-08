@@ -8,39 +8,7 @@ A dashboard is only useful if the data behind it is fresh and someone actually l
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A[Cloud Scheduler - 5am daily trigger] --> B{Extract loop}
-    B --> B1[Google Ads]
-    B --> B2[Meta Ads]
-    B --> B3[GA4]
-    B --> B4[CRM]
-    B1 & B2 & B3 & B4 --> C[Load into BigQuery raw tables]
-    C --> D[dbt run: staging + marts]
-    D --> E[Anomaly detector]
-
-    E --> F{For each watched metric}
-    F --> G[Compare latest value to trailing 7d average]
-    G --> H{Deviation over threshold?}
-    H -->|No| I[Mark healthy, update dashboard cache]
-    H -->|Yes| J[Slack alert with metric, expected range, actual value]
-
-    subgraph Retry["Failure handling"]
-        B1 -.retry up to 3x.-> B1
-        D -.on failure.-> K[Pipeline failure alert]
-    end
-
-    classDef trigger fill:#F5F4FA,stroke:#644aab,color:#333
-    classDef extract fill:#fff3cd,stroke:#d35400,color:#333
-    classDef check fill:#e0f2f1,stroke:#00796b,color:#333
-    classDef alert fill:#ffebee,stroke:#c0392b,color:#333
-    classDef ok fill:#e8f5e9,stroke:#1e8449,color:#333
-    class A trigger
-    class B1,B2,B3,B4,C extract
-    class D,E,F,G,H check
-    class J,K alert
-    class I ok
-```
+![Architecture diagram](diagram.svg)
 
 The anomaly detector step is deliberately positioned after the dbt run, not before, so it's always evaluating modeled, business-logic-applied metrics like blended ROAS rather than raw, unjoined numbers that would produce noisy false positives.
 
