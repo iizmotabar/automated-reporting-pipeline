@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 912" font-family="Segoe Print, Bradley Hand, Comic Sans MS, cursive, sans-serif">
+<defs><filter id="sketch" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="3.5"/></filter></defs>
+<rect x="0" y="0" width="840" height="912" fill="#ffffff"/>
+<text x="420.0" y="38" font-size="26" text-anchor="middle" fill="#1e1e1e" font-weight="bold">Automated Reporting Flow</text>
+<g filter="url(#sketch)">
+<rect x="40.0" y="70" width="760" height="70" rx="22" ry="22" fill="#a5d8ff" stroke="#4a9eed" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="111.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Cloud Scheduler: 5am daily trigger</text>
+<g filter="url(#sketch)">
+<line x1="420.0" y1="144" x2="420.0" y2="181" stroke="#555555" stroke-width="2.5"/>
+<polygon points="412.0,181 428.0,181 420.0,193" fill="#555555"/>
+</g>
+<g filter="url(#sketch)">
+<rect x="40.0" y="195" width="760" height="94" rx="22" ry="22" fill="#d0bfff" stroke="#8b5cf6" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="236.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Extract from Google Ads, Meta, GA4, and</text>
+<text x="420.0" y="260.0" font-size="18" text-anchor="middle" fill="#1e1e1e">CRM</text>
+<g filter="url(#sketch)">
+<line x1="420.0" y1="293" x2="420.0" y2="330" stroke="#555555" stroke-width="2.5"/>
+<polygon points="412.0,330 428.0,330 420.0,342" fill="#555555"/>
+</g>
+<g filter="url(#sketch)">
+<rect x="40.0" y="344" width="760" height="70" rx="22" ry="22" fill="#c3fae8" stroke="#0891b2" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="385.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Load into BigQuery raw tables</text>
+<g filter="url(#sketch)">
+<line x1="420.0" y1="418" x2="420.0" y2="455" stroke="#555555" stroke-width="2.5"/>
+<polygon points="412.0,455 428.0,455 420.0,467" fill="#555555"/>
+</g>
+<g filter="url(#sketch)">
+<rect x="40.0" y="469" width="760" height="70" rx="22" ry="22" fill="#b2f2bb" stroke="#22c55e" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="510.0" font-size="18" text-anchor="middle" fill="#1e1e1e">dbt run: staging and mart models</text>
+<g filter="url(#sketch)">
+<line x1="420.0" y1="543" x2="420.0" y2="580" stroke="#555555" stroke-width="2.5"/>
+<polygon points="412.0,580 428.0,580 420.0,592" fill="#555555"/>
+</g>
+<g filter="url(#sketch)">
+<rect x="40.0" y="594" width="760" height="94" rx="22" ry="22" fill="#ffd8a8" stroke="#f59e0b" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="635.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Anomaly detector compares to trailing 7</text>
+<text x="420.0" y="659.0" font-size="18" text-anchor="middle" fill="#1e1e1e">day average</text>
+<g filter="url(#sketch)">
+<line x1="420.0" y1="692" x2="420.0" y2="729" stroke="#555555" stroke-width="2.5"/>
+<polygon points="412.0,729 428.0,729 420.0,741" fill="#555555"/>
+</g>
+<g filter="url(#sketch)">
+<rect x="40.0" y="743" width="760" height="94" rx="22" ry="22" fill="#fff3bf" stroke="#d97706" stroke-width="2.5"/>
+</g>
+<text x="420.0" y="784.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Healthy: update dashboard cache. Anomaly:</text>
+<text x="420.0" y="808.0" font-size="18" text-anchor="middle" fill="#1e1e1e">Slack alert with expected range</text>
+</svg>
