@@ -1,0 +1,24 @@
+# Defines which metrics the anomaly detector watches and how sensitive each
+# threshold is. threshold_pct is the allowed deviation from the trailing 7 day
+# average before an alert fires.
+
+watched_metrics:
+  - name: "Total daily spend"
+    table: "project.marts.fct_channel_performance"
+    column: "total_spend"
+    threshold_pct: 25
+
+  - name: "Blended ROAS"
+    table: "project.marts.fct_channel_performance"
+    column: "roas"
+    threshold_pct: 20
+
+  - name: "Leads created"
+    table: "project.marts.fct_lead_volume"
+    column: "lead_count"
+    threshold_pct: 30
+
+  - name: "GA4 session count"
+    table: "project.marts.fct_sessions_daily"
+    column: "session_count"
+    threshold_pct: 35
