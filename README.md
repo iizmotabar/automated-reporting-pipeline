@@ -36,3 +36,11 @@ Start conservative (25-35%) and tighten over the first few weeks once you have a
 ## Stack
 
 Python, BigQuery, dbt, Cloud Scheduler, Slack API
+
+## Related
+
+* Case study: [Proactive Insight Delivery With Slack Alerts](https://motabarbuildstuff.com/case-studies/proactive-insight-delivery-with-slack-alerts/)
+* Case study: [Single Source of Truth for Marketing Data](https://motabarbuildstuff.com/case-studies/single-source-of-truth-for-marketing-data/)
+* Service: [All analytics and tracking services](https://motabarbuildstuff.com/services/)
+
+Built by [Motabar Javaid](https://motabarbuildstuff.com/about/), analytics engineer at [motabar.builds.stuff](https://motabarbuildstuff.com/).
